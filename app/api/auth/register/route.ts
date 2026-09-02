@@ -27,6 +27,14 @@ export async function POST(req: NextRequest) {
         email,
         password: hashedPassword,
       },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        platformRole: true,
+        createdAt: true,
+      },
     });
 
     return NextResponse.json(

@@ -12,6 +12,11 @@ datasource db {
   provider = "postgresql"
 }
 
+enum PlatformRole {
+  USER
+  ADMIN
+}
+
 enum WorkspaceRole {
   OWNER
   ADMIN
@@ -20,11 +25,14 @@ enum WorkspaceRole {
 
 model User {
   // fields
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  password  String
-  image     String?
+  id       String  @id @default(cuid())
+  name     String
+  email    String  @unique
+  password String
+  image    String?
+
+  platformRole PlatformRole @default(USER)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

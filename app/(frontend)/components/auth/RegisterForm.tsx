@@ -47,6 +47,7 @@ const RegisterForm = () => {
 
       setErrorMessage(message);
     }
+    toast.dismiss(toastId);
   };
 
   return (

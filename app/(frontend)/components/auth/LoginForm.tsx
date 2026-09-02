@@ -36,7 +36,7 @@ const LoginForm = () => {
         id: toastId,
       });
 
-      router.refresh();
+      router.push("/dashboard");
     } else {
       toast.error(String(error), {
         id: toastId,
