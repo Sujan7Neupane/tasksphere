@@ -2,6 +2,8 @@ import NextAuth, { CredentialsSignin } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "./prisma/client";
 import bcrypt from "bcrypt";
+import type { Session } from "next-auth";
+import type { JWT } from "next-auth/jwt";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -55,6 +57,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
+  // to add id and platform role in token
+  // generally nextjs ma token ma name and email matra huncha
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.platformRole = user.platformRole;
+      }
+      return token;
+    },
+    async session({ session, token }: { session: Session; token: JWT }) {
+      session.user.id = token.id;
+      session.user.platformRole = token.platformRole;
+      return session;
+    },
+  },
   pages: {
     signIn: "/login",
   },

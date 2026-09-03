@@ -1,7 +1,7 @@
 "use server";
 import axios from "axios";
 
-import { signIn } from "@/auth";
+import { signIn, signOut } from "@/auth";
 import { CredentialsSignin } from "next-auth";
 
 export async function credentialsLogin(email: string, password: string) {
@@ -20,6 +20,10 @@ export async function credentialsLogin(email: string, password: string) {
 
     throw error;
   }
+}
+
+export async function logoutUser() {
+  await signOut({ redirectTo: "/login" });
 }
 
 export const registerUser = async (
