@@ -1,53 +1,70 @@
 "use client";
 
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { RegisterFormData, registerSchema } from "../../../schemas/auth.schema";
+
 import { registerUser } from "../../actions/auth.actions";
+import FormInput from "../ui/FormInput";
+import PasswordInput from "../ui/PasswordInput";
+import Button from "../ui/Button";
+import { RegisterFormData, registerSchema } from "../../../schemas/auth.schema";
 
 const RegisterForm = () => {
   const router = useRouter();
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
   });
 
   const onSubmit = async (data: RegisterFormData) => {
+    // console.log(data);
+
     setErrorMessage("");
+    setIsSubmitting(true);
 
-    const toastId = toast.loading("Creating account...");
+    try {
+      const result = await registerUser(
+        data.name,
+        data.email,
+        data.password,
+        data.confirmPassword,
+      );
 
-    const error = await registerUser(data.name, data.email, data.password);
+      // Field validation errors from server
+      if (result.nameError || result.emailError || result.passwordError) {
+        setErrorMessage(result.errorMessage ?? "");
+        return;
+      }
 
-    if (!error) {
-      toast.success("Account created successfully!", {
-        id: toastId,
-      });
+      if (result.errorMessage) {
+        toast.error(result.errorMessage);
+        return;
+      }
 
-      router.push("/login");
-    } else {
-      const message = String(error);
+      // Registration successful
+      if (result.success) {
+        toast.success("Account created successfully!");
+        router.push("/login");
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
 
-      toast.error(message, {
-        id: toastId,
-      });
-
-      setErrorMessage(message);
+      toast.error("Registration failed");
+      setErrorMessage("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
-    toast.dismiss(toastId);
   };
 
   return (
@@ -58,95 +75,35 @@ const RegisterForm = () => {
       <div className="card-body">
         <h2 className="card-title justify-center text-2xl">Create Account</h2>
 
-        <div className="form-control">
-          <label className="label mb-1 mr-3">
-            <span className="label-text">Name</span>
-          </label>
+        <FormInput
+          label="Name"
+          type="text"
+          placeholder="Enter your name"
+          error={errors.name?.message}
+          {...register("name")}
+        />
 
-          <input
-            type="text"
-            placeholder="Enter your name"
-            className="input input-bordered w-full rounded-md"
-            {...register("name")}
-          />
+        <FormInput
+          label="Email"
+          type="email"
+          placeholder="Enter your email"
+          error={errors.email?.message}
+          {...register("email")}
+        />
 
-          {errors.name && (
-            <p className="text-error text-sm mt-1">{errors.name.message}</p>
-          )}
-        </div>
+        <PasswordInput
+          label="Password"
+          placeholder="Enter your password"
+          error={errors.password?.message}
+          {...register("password")}
+        />
 
-        <div className="form-control">
-          <label className="label mb-1 mr-3">
-            <span className="label-text">Email</span>
-          </label>
-
-          <input
-            type="email"
-            placeholder="Enter your email"
-            className="input input-bordered w-full rounded-md"
-            {...register("email")}
-          />
-
-          {errors.email && (
-            <p className="text-error text-sm mt-1">{errors.email.message}</p>
-          )}
-        </div>
-
-        <div className="form-control">
-          <label className="label mb-1 mr-3">
-            <span className="label-text">Password</span>
-          </label>
-
-          <div className="relative">
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Enter your password"
-              className="input input-bordered w-full pr-12 rounded-md"
-              {...register("password")}
-            />
-
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500"
-            >
-              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-            </button>
-          </div>
-
-          {errors.password && (
-            <p className="text-error text-sm mt-1">{errors.password.message}</p>
-          )}
-        </div>
-
-        <div className="form-control">
-          <label className="label mb-1 mr-3">
-            <span className="label-text">Confirm Password</span>
-          </label>
-
-          <div className="relative">
-            <input
-              type={showConfirmPassword ? "text" : "password"}
-              placeholder="Confirm your password"
-              className="input input-bordered w-full pr-12 rounded-md"
-              {...register("confirmPassword")}
-            />
-
-            <button
-              type="button"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500"
-            >
-              {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-            </button>
-          </div>
-
-          {errors.confirmPassword && (
-            <p className="text-error text-sm mt-1">
-              {errors.confirmPassword.message}
-            </p>
-          )}
-        </div>
+        <PasswordInput
+          label="Confirm Password"
+          placeholder="Confirm your password"
+          error={errors.confirmPassword?.message}
+          {...register("confirmPassword")}
+        />
 
         {errorMessage && (
           <div className="alert alert-error mt-2">
@@ -154,13 +111,9 @@ const RegisterForm = () => {
           </div>
         )}
 
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="btn btn-primary mt-4 rounded-md"
-        >
+        <Button type="submit" className="mt-4 w-full" disabled={isSubmitting}>
           {isSubmitting ? "Creating account..." : "Sign Up"}
-        </button>
+        </Button>
 
         <div className="text-center mt-4">
           <p className="text-sm">
