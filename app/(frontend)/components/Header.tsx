@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { logoutUser } from "../actions/auth.actions";
 import { auth } from "../../../auth";
+import ProfileMenu from "./auth/ProfileMenu";
 
 const Header = async () => {
   const session = await auth();
+  // console.log(session);
+
   return (
     <header className="sticky top-0 z-50 bg-base-100/95 shadow-md backdrop-blur">
       <div className="navbar mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -16,7 +19,7 @@ const Header = async () => {
           </Link>
         </div>
 
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden items-center gap-4 md:flex">
           <Link
             href={
               session?.user.platformRole === "ADMIN"
@@ -27,19 +30,16 @@ const Header = async () => {
             Dashboard
           </Link>
 
-          <Link href="/workspaces" className="btn btn-ghost btn-sm">
-            Workspaces
-          </Link>
+          <Link href="/workspaces">Workspaces</Link>
+          <Link href="/profile">Profile</Link>
 
           <div className="divider divider-horizontal mx-1" />
 
-          <button className="btn btn-ghost btn-circle">
-            <div className="avatar placeholder">
-              <div className="w-9 rounded-full bg-primary text-primary-content flex justify-center items-center">
-                <span>U</span>
-              </div>
-            </div>
-          </button>
+          <div>
+            <ProfileMenu />
+          </div>
+
+          <div className="divider divider-horizontal mx-1" />
 
           <form action={logoutUser}>
             <button
@@ -91,6 +91,10 @@ const Header = async () => {
 
             <li>
               <Link href="/workspaces">Workspaces</Link>
+            </li>
+
+            <li>
+              <Link href="/profile">Profile</Link>
             </li>
 
             <li>
