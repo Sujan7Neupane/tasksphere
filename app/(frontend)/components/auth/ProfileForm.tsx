@@ -14,6 +14,7 @@ import {
   useCurrentUser,
   useUpdateProfile,
 } from "../../../hooks/useCurrentUser";
+import Link from "next/link";
 
 const ProfileForm = () => {
   const { data: user, isLoading } = useCurrentUser();
@@ -98,7 +99,6 @@ const ProfileForm = () => {
           })}
         />
       </div>
-
       <FormInput
         className="mb-4"
         label="Name"
@@ -108,7 +108,6 @@ const ProfileForm = () => {
         defaultValue={user.name}
         {...register("name")}
       />
-
       <FormInput
         className="mb-4"
         label="Email"
@@ -116,7 +115,6 @@ const ProfileForm = () => {
         value={user.email}
         disabled
       />
-
       <Button
         type="submit"
         className="w-full"
@@ -124,6 +122,20 @@ const ProfileForm = () => {
       >
         {updateProfileMutation.isPending ? "Saving..." : "Save Changes"}
       </Button>
+      <div className="mt-5 border-t border-base-300 pt-4">
+        <p className="text-sm font-medium">Security</p>
+
+        <p className="mt-1 text-xs text-base-content/60">
+          Keep your account secure by using a strong, unique password.
+        </p>
+
+        <Link
+          href="/profile/change-password"
+          className="btn btn-outline rounded-sm mt-3 w-full"
+        >
+          Change Password
+        </Link>
+      </div>
     </form>
   );
 };

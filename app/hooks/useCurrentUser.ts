@@ -1,7 +1,11 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getCurrentUser, updateProfile } from "../services/auth.services";
+import {
+  changePassword,
+  getCurrentUser,
+  updateProfile,
+} from "../services/auth.services";
 
 export const useCurrentUser = () => {
   return useQuery({
@@ -21,5 +25,11 @@ export const useUpdateProfile = () => {
         queryKey: ["currentUser"],
       });
     },
+  });
+};
+
+export const useChangePassword = () => {
+  return useMutation({
+    mutationFn: changePassword,
   });
 };
