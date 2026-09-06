@@ -42,6 +42,7 @@ model User {
   assignedTasks Task[]            @relation("AssignedTasks") //1. task assigned to 
   createdTasks  Task[]            @relation("CreatedTasks") //2. who created it 
   comments      Comment[]
+  invitations   Invitation[]
 }
 
 model Workspace {
@@ -53,8 +54,9 @@ model Workspace {
   updatedAt   DateTime @updatedAt
 
   // relations
-  members  WorkspaceMember[]
-  projects Project[]
+  members     WorkspaceMember[]
+  projects    Project[]
+  invitations Invitation[]
 }
 
 // join/association model - links worspace and user model
@@ -75,6 +77,36 @@ model WorkspaceMember {
   @@unique([userId, workspaceId]) // prevents the same user added to the same workspace twice
   @@index([workspaceId])
   @@index([userId])
+}
+
+// Workspace Owner inviting other member in workspace
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  CANCELLED
+  EXPIRED
+}
+
+model Invitation {
+  // fields
+  id          String   @id @default(cuid())
+  email       String
+  token       String   @unique
+  workspaceId String
+  invitedById String
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  status InvitationStatus @default(PENDING)
+
+  // relations
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  invitedBy User      @relation(fields: [invitedById], references: [id], onDelete: Cascade)
+
+  // constraints
+  @@index([workspaceId])
+  @@index([email])
 }
 
 model Project {
