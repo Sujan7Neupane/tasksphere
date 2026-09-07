@@ -1,13 +1,13 @@
-import axios from "axios";
+import api from "../lib/axios";
 
 export const getCurrentUser = async () => {
-  const response = await axios.get("/api/auth/me");
+  const response = await api.get("/auth/me");
 
   return response.data.user;
 };
 
 export const updateProfile = async (formData: FormData) => {
-  const response = await axios.patch("/api/auth/profile", formData);
+  const response = await api.patch("/auth/profile", formData);
 
   return response.data;
 };
@@ -18,7 +18,7 @@ export interface ChangePasswordData {
 }
 
 export const changePassword = async (data: ChangePasswordData) => {
-  const response = await axios.patch("/api/auth/change-password", data);
+  const response = await api.patch("/auth/change-password", data);
 
   return response.data;
 };

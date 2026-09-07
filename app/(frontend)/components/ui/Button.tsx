@@ -3,6 +3,7 @@ type ButtonProps = {
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
   className?: string;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
 };
 
 const Button = ({
@@ -10,11 +11,13 @@ const Button = ({
   type = "button",
   disabled = false,
   className = "",
+  onClick,
 }: ButtonProps) => {
   return (
     <button
       type={type}
       disabled={disabled}
+      onClick={onClick}
       className={`btn btn-primary rounded-md ${className}`}
     >
       {children}
