@@ -5,7 +5,7 @@ import {
   getWorkspace,
   getWorkspaces,
   updateWorkspace,
-} from "../services/workspace.services";
+} from "../services/workspace.service";
 
 // all workspaces
 export const useWorkspaces = () => {

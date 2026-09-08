@@ -58,9 +58,13 @@ export default function WorkspaceSettingsPage() {
       ) : isError || !data ? (
         <p className="text-error">Failed to load workspace.</p>
       ) : data.role === "MEMBER" ? (
-        <p className="text-error">
-          You do not have permission to update this workspace.
-        </p>
+        <div className="p-6">
+          <h1 className="text-2xl font-bold">Settings</h1>
+
+          <p className="mt-2 text-gray-500">
+            You do not have permission to change settings.
+          </p>
+        </div>
       ) : (
         <>
           <button

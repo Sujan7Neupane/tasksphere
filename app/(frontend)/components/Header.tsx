@@ -2,6 +2,7 @@ import Link from "next/link";
 import { logoutUser } from "../actions/auth.actions";
 import { auth } from "../../../auth";
 import ProfileMenu from "./auth/ProfileMenu";
+import InvitationNavLink from "./invitations/InvitationNavLink";
 
 const Header = async () => {
   const session = await auth();
@@ -29,6 +30,8 @@ const Header = async () => {
           >
             Dashboard
           </Link>
+
+          {session?.user.platformRole !== "ADMIN" && <InvitationNavLink />}
 
           <Link
             href={
@@ -96,6 +99,12 @@ const Header = async () => {
                 Dashboard
               </Link>
             </li>
+
+            {session?.user.platformRole !== "ADMIN" && (
+              <li>
+                <InvitationNavLink />
+              </li>
+            )}
 
             <li>
               <Link

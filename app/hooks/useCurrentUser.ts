@@ -5,7 +5,7 @@ import {
   changePassword,
   getCurrentUser,
   updateProfile,
-} from "../services/auth.services";
+} from "../services/auth.service";
 
 export const useCurrentUser = () => {
   return useQuery({

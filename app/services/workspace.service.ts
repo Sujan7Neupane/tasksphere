@@ -24,6 +24,8 @@ export const getWorkspace = async (
     `/workspaces/${workspaceId}`,
   );
 
+  // console.log(response);
+
   return response.data;
 };
 
@@ -41,6 +43,7 @@ export const updateWorkspace = async ({
   data: UpdateWorkspaceData;
 }) => {
   const response = await api.patch(`/workspaces/${workspaceId}`, data);
+  // console.log(response);
 
   return response.data;
 };

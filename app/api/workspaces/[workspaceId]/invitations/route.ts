@@ -93,6 +93,7 @@ export async function POST(
       where: {
         email: normalizedEmail,
         workspaceId,
+        status: "PENDING",
         expiresAt: {
           gt: new Date(),
         },
@@ -122,14 +123,17 @@ export async function POST(
       },
     });
 
+    const invitationLink = `${process.env.BASE_URL}/user/invitations/${token}`;
+
     return NextResponse.json(
       {
         message: "User invited successfully",
         invitation: {
           id: invitation.id,
           email: invitation.email,
-          token: invitation.token,
+          // token: invitation.token,
           expiresAt: invitation.expiresAt,
+          invitationLink,
         },
       },
       { status: 201 },
@@ -184,7 +188,9 @@ export async function GET(
     }
     if (member.role === "MEMBER") {
       return NextResponse.json(
-        { message: "You do not have permission to view invitations" },
+        {
+          message: "You do not have permission to view invitations",
+        },
         { status: 403 },
       );
     }
@@ -194,9 +200,19 @@ export async function GET(
       where: {
         workspaceId,
         status: "PENDING",
+        expiresAt: {
+          gt: new Date(),
+        },
       },
       orderBy: {
         createdAt: "desc",
+      },
+      select: {
+        id: true,
+        email: true,
+        status: true,
+        expiresAt: true,
+        createdAt: true,
       },
     });
 
