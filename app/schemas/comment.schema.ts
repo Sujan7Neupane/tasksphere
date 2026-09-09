@@ -1,0 +1,20 @@
+import { z } from "zod";
+
+export const createCommentSchema = z.object({
+  content: z
+    .string()
+    .trim()
+    .min(1, "Comment cannot be empty")
+    .max(2000, "Comment must be less than 2000 characters"),
+});
+
+export const updateCommentSchema = z.object({
+  content: z
+    .string()
+    .trim()
+    .min(1, "Comment cannot be empty")
+    .max(2000, "Comment must be less than 2000 characters"),
+});
+
+export type CreateCommentData = z.infer<typeof createCommentSchema>;
+export type UpdateCommentData = z.infer<typeof updateCommentSchema>;

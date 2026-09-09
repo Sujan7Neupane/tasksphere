@@ -189,7 +189,7 @@ model Comment {
   taskId   String
   task     Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
   authorId String
-  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Restrict) //delete user but comment stays
 
   // constraints
   @@index([taskId])
