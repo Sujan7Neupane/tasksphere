@@ -15,6 +15,7 @@ export async function POST(request: Request, { params }: ProjectParams) {
     if (!session?.user?.id) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
+    console.log(session);
 
     const { workspaceId } = await params;
     const body = await request.json();
@@ -31,6 +32,7 @@ export async function POST(request: Request, { params }: ProjectParams) {
     }
 
     const { name, description } = validation.data;
+    console.log(name, description);
 
     const membership = await prisma.workspaceMember.findUnique({
       where: {
@@ -40,6 +42,8 @@ export async function POST(request: Request, { params }: ProjectParams) {
         },
       },
     });
+
+    console.log(membership);
 
     if (!membership) {
       return NextResponse.json(
