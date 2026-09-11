@@ -19,6 +19,7 @@ export type Task = {
   createdAt: string;
   updatedAt: string;
 
+  project: TaskProject;
   projectId: string;
 
   assignedToId: string | null;
@@ -39,8 +40,9 @@ export type CreateTaskData = {
 export type UpdateTaskData = {
   title: string;
   description?: string;
-  priority: TaskPriority;
-  dueDate?: string;
+  status?: TaskStatus;
+  priority?: TaskPriority;
+  dueDate?: string | null;
   assignedToId?: string | null;
 };
 
@@ -50,4 +52,11 @@ export type UpdateTaskStatusData = {
 
 export type AssignTaskData = {
   assignedToId: string | null;
+};
+
+export type TaskProject = {
+  id: string;
+  name: string;
+  description: string | null;
+  workspaceId: string;
 };

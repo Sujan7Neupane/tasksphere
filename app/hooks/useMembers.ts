@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
   getMembers,
+  getWorkspaceMembers,
   removeMember,
   updateMemberRole,
 } from "../services/member.service";
@@ -41,5 +42,13 @@ export const useRemoveMember = () => {
         queryKey: ["members", variables.workspaceId],
       });
     },
+  });
+};
+
+export const useWorkspaceMembers = (workspaceId: string) => {
+  return useQuery({
+    queryKey: ["workspace-members", workspaceId],
+    queryFn: () => getWorkspaceMembers(workspaceId),
+    enabled: !!workspaceId,
   });
 };

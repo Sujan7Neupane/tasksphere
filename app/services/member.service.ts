@@ -1,5 +1,6 @@
 import api from "../lib/axios";
 import { WorkspaceMember } from "../types/members.types";
+import { WorkspaceMembersResponse } from "../types/workapces.types";
 
 export const getMembers = async (
   workspaceId: string,
@@ -38,6 +39,14 @@ export const removeMember = async ({
   const response = await api.delete(
     `/workspaces/${workspaceId}/members/${userId}`,
   );
+
+  return response.data;
+};
+
+export const getWorkspaceMembers = async (
+  workspaceId: string,
+): Promise<WorkspaceMembersResponse> => {
+  const response = await api.get(`/workspaces/${workspaceId}/members`);
 
   return response.data;
 };

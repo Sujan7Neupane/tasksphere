@@ -42,3 +42,17 @@ export interface UpdateWorkspaceData {
   name: string;
   description?: string;
 }
+
+export type WorkspaceMember = {
+  userId: string;
+  name: string;
+  email: string;
+  image: string | null;
+  role: "OWNER" | "ADMIN" | "MEMBER";
+  joinedAt: string;
+};
+
+export type WorkspaceMembersResponse = {
+  workspaceId: string;
+  members: WorkspaceMember[];
+};

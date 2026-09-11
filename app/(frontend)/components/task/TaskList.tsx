@@ -11,7 +11,7 @@ const TaskList = ({ projectId }: TaskListProps) => {
   //   console.log(projectId);
 
   const { data, isLoading, isError } = useTasks(projectId);
-  //   console.log(data);
+  // console.log(data);
 
   if (isLoading) {
     return (
@@ -60,6 +60,10 @@ const TaskList = ({ projectId }: TaskListProps) => {
               <span>Due: {new Date(task.dueDate).toLocaleDateString()}</span>
             )}
           </div>
+
+          {task.assignedTo && (
+            <span className="mt-3">Assigned to: {task.assignedTo.name}</span>
+          )}
         </Link>
       ))}
     </div>
