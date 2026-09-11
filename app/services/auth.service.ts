@@ -7,7 +7,12 @@ export const getCurrentUser = async () => {
 };
 
 export const updateProfile = async (formData: FormData) => {
-  const response = await api.patch("/auth/profile", formData);
+  const response = await api.patch("/auth/profile", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  // console.log(response);
 
   return response.data;
 };

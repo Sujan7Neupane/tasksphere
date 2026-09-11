@@ -33,6 +33,8 @@ const ProfileForm = () => {
   });
 
   const onSubmit = async (data: ProfileFormData) => {
+    // console.log(data);
+
     try {
       console.log("Selected image:", data.image?.[0]);
 
@@ -52,6 +54,8 @@ const ProfileForm = () => {
         setPreview(response.user.image);
       }
     } catch (error: any) {
+      console.log(error);
+
       toast.error(error.response?.data?.message || "Failed to update profile.");
     }
   };
