@@ -5,6 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useDeleteTask, useTask } from "../../../../../hooks/useTasks";
+import CreateCommentForm from "../../../../components/comment/CreateCommentForm";
+import CommentList from "../../../../components/comment/CommentList";
 
 const TaskDetailsPage = () => {
   const params = useParams();
@@ -125,6 +127,24 @@ const TaskDetailsPage = () => {
           >
             {deleteTask.isPending ? "Deleting..." : "Delete"}
           </button>
+        </div>
+      </div>
+
+      <div className="mt-6 rounded-md border border-base-300 bg-base-100">
+        <div className="border-b border-base-300 p-6">
+          <h2 className="text-lg font-semibold">Comments</h2>
+
+          <p className="mt-1 text-sm text-base-content/70">
+            Discuss this task with your workspace members.
+          </p>
+        </div>
+
+        <div className="space-y-6 p-6">
+          <CreateCommentForm taskId={task.id} />
+
+          <div className="border-t border-base-300 pt-6">
+            <CommentList taskId={task.id} />
+          </div>
         </div>
       </div>
     </div>

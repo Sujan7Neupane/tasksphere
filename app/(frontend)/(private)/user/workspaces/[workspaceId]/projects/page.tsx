@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-
 import ProjectList from "../../../../../components/project/ProjectList";
 
 const ProjectsPage = () => {
