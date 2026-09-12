@@ -48,11 +48,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           throw new CredentialsSignin("Invalid email or password.");
         }
 
+        if (!user.isActive) {
+          throw new CredentialsSignin(
+            "Account has been disabled. Please contact an administrator.",
+          );
+        }
+
         return {
           id: user.id.toString(),
           name: user.name,
           email: user.email,
           platformRole: user.platformRole,
+          isActive: user.isActive,
         };
       },
     }),
@@ -64,12 +71,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (user) {
         token.id = user.id;
         token.platformRole = user.platformRole;
+        token.isActive = user.isActive;
       }
       return token;
     },
     async session({ session, token }: { session: Session; token: JWT }) {
       session.user.id = token.id;
       session.user.platformRole = token.platformRole;
+      session.user.isActive = token.isActive;
       return session;
     },
   },

@@ -106,7 +106,7 @@ export async function credentialsLogin(
 
     if (error instanceof CredentialsSignin) {
       return {
-        errorMessage: "Invalid email or password.",
+        errorMessage: error.message,
       };
     }
 

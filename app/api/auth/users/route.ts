@@ -19,6 +19,7 @@ export async function GET() {
         email: true,
         image: true,
         platformRole: true,
+        isActive: true,
         createdAt: true,
         updatedAt: true,
       },

@@ -11,6 +11,10 @@ const PrivateLayout = async ({ children }: { children: React.ReactNode }) => {
     redirect("/login");
   }
 
+  if (!session.user.isActive) {
+    redirect("/login?error=AccountDisabled");
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />

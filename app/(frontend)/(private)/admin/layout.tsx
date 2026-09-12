@@ -9,7 +9,9 @@ const AdminLayout = async ({ children }: { children: React.ReactNode }) => {
     redirect("/user/dashboard");
   }
 
-  return <>{children}</>;
+  return (
+    <div className="mx-auto w-full max-w-7xl px-6 lg:px-10">{children}</div>
+  );
 };
 
 export default AdminLayout;

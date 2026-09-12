@@ -44,6 +44,10 @@ const Header = async () => {
           </Link>
           <Link href="/profile">Profile</Link>
 
+          {session?.user.platformRole === "ADMIN" && (
+            <Link href="/admin/users">Users</Link>
+          )}
+
           <div className="divider divider-horizontal mx-1" />
 
           <div>
@@ -116,6 +120,12 @@ const Header = async () => {
               >
                 Workspaces
               </Link>
+            </li>
+
+            <li>
+              {session?.user.platformRole === "ADMIN" && (
+                <Link href="/admin/users">Users</Link>
+              )}
             </li>
 
             <li>
