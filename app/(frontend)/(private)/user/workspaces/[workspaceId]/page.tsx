@@ -8,11 +8,15 @@ import {
   useWorkspace,
 } from "../../../../../hooks/useWorkspaces";
 import Button from "../../../../components/ui/Button";
+import WorkspaceChat from "../../../../components/chat/WorkspaceChat";
+import { useSession } from "next-auth/react";
 
 export default function WorkspacePage() {
   const router = useRouter();
   const params = useParams();
   const workspaceId = params.workspaceId as string;
+
+  const { data: session } = useSession();
 
   const { data, isLoading, isError } = useWorkspace(workspaceId);
   const { mutate: deleteWorkspace, isPending } = useDeleteWorkspace();
@@ -96,6 +100,14 @@ export default function WorkspacePage() {
               )}
             </div>
           </div>
+          {session?.user?.id && (
+            <div className="mt-6">
+              <WorkspaceChat
+                workspaceId={workspaceId}
+                currentUserId={session.user.id}
+              />
+            </div>
+          )}
         </main>
       )}
     </>

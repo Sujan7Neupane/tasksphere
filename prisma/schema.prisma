@@ -45,6 +45,7 @@ model User {
   createdTasks  Task[]            @relation("CreatedTasks") //2. who created it 
   comments      Comment[]
   invitations   Invitation[]
+  messages      Message[]
 }
 
 model Workspace {
@@ -59,6 +60,7 @@ model Workspace {
   members     WorkspaceMember[]
   projects    Project[]
   invitations Invitation[]
+  messages    Message[]
 }
 
 // join/association model - links worspace and user model
@@ -196,4 +198,20 @@ model Comment {
   // constraints
   @@index([taskId])
   @@index([authorId])
+}
+
+model Message {
+  id          String   @id @default(cuid())
+  content     String
+  workspaceId String
+  senderId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  sender    User      @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@index([senderId])
+  @@index([createdAt])
 }
