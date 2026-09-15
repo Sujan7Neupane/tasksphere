@@ -3,6 +3,7 @@ import { logoutUser } from "../actions/auth.actions";
 import { auth } from "../../../auth";
 import ProfileMenu from "./auth/ProfileMenu";
 import InvitationNavLink from "./invitations/InvitationNavLink";
+import NotificationBell from "./notification/NotificationBell";
 
 const Header = async () => {
   const session = await auth();
@@ -52,6 +53,10 @@ const Header = async () => {
 
           <div>
             <ProfileMenu />
+          </div>
+
+          <div>
+            <NotificationBell />
           </div>
 
           <div className="divider divider-horizontal mx-1" />

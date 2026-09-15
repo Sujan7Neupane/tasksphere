@@ -60,3 +60,19 @@ export type TaskProject = {
   description: string | null;
   workspaceId: string;
 };
+
+export interface TaskNotification {
+  id: string;
+  type: "TASK_ASSIGNED";
+  message: string;
+  isRead: boolean;
+  relatedId: string | null;
+  createdAt: string;
+  userId: string;
+}
+
+export interface UpdateTaskResponse {
+  message: string;
+  task: Task;
+  notification: TaskNotification | null;
+}

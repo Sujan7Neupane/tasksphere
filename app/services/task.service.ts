@@ -5,6 +5,7 @@ import {
   CreateTaskData,
   Task,
   UpdateTaskData,
+  UpdateTaskResponse,
   UpdateTaskStatusData,
 } from "../types/task.types";
 
@@ -30,7 +31,10 @@ export const getTask = async (taskId: string) => {
   return response.data;
 };
 
-export const updateTask = async (taskId: string, data: UpdateTaskData) => {
+export const updateTask = async (
+  taskId: string,
+  data: UpdateTaskData,
+): Promise<UpdateTaskResponse> => {
   const response = await api.put(`/tasks/${taskId}`, data);
 
   return response.data;

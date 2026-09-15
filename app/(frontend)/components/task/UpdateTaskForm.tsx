@@ -11,6 +11,8 @@ import {
   updateTaskSchema,
 } from "../../../schemas/task.schemas";
 import { useWorkspaceMembers } from "../../../hooks/useMembers";
+import { useEffect } from "react";
+import socket from "../chat/socket";
 
 type UpdateTaskFormProps = {
   taskId: string;
@@ -40,9 +42,12 @@ const UpdateTaskForm = ({
   const { data: membersData, isLoading: isMembersLoading } =
     useWorkspaceMembers(workspaceId);
 
+  // console.log(membersData);
+
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<UpdateTaskData>({
     resolver: zodResolver(updateTaskSchema),
@@ -51,9 +56,26 @@ const UpdateTaskForm = ({
       description: initialDescription || "",
       priority: initialPriority,
       dueDate: initialDueDate ? initialDueDate.slice(0, 10) : "",
-      assignedToId: initialAssignedToId,
+      assignedToId: initialAssignedToId || "",
     },
   });
+
+  useEffect(() => {
+    reset({
+      title: initialTitle,
+      description: initialDescription || "",
+      priority: initialPriority,
+      dueDate: initialDueDate ? initialDueDate.slice(0, 10) : "",
+      assignedToId: initialAssignedToId || "",
+    });
+  }, [
+    initialTitle,
+    initialDescription,
+    initialPriority,
+    initialDueDate,
+    initialAssignedToId,
+    reset,
+  ]);
 
   const onSubmit = (data: UpdateTaskData) => {
     updateTask.mutate(
@@ -68,8 +90,16 @@ const UpdateTaskForm = ({
         },
       },
       {
-        onSuccess: () => {
+        onSuccess: (response) => {
           toast.success("Task updated successfully");
+
+          if (response.notification) {
+            socket.emit("send-notification", {
+              userId: response.notification.userId,
+              notification: response.notification,
+            });
+          }
+
           onSuccess();
         },
         onError: (error) => {

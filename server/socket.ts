@@ -35,6 +35,17 @@ io.on("connection", (socket) => {
     },
   );
 
+  socket.on(
+    "send-notification",
+    ({ userId, notification }: { userId: string; notification: object }) => {
+      const socketId = onlineUsers.get(userId);
+
+      if (socketId) {
+        io.to(socketId).emit("new-notification", notification);
+      }
+    },
+  );
+
   socket.on("disconnect", () => {
     for (const [userId, socketId] of onlineUsers.entries()) {
       if (socketId === socket.id) {

@@ -46,6 +46,7 @@ model User {
   comments      Comment[]
   invitations   Invitation[]
   messages      Message[]
+  notifications Notification[]
 }
 
 model Workspace {
@@ -213,5 +214,27 @@ model Message {
 
   @@index([workspaceId])
   @@index([senderId])
+  @@index([createdAt])
+}
+
+enum NotificationType {
+  WORKSPACE_INVITATION
+  TASK_ASSIGNED
+  TASK_COMMENT
+  ROLE_CHANGED
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  type      NotificationType
+  message   String
+  isRead    Boolean          @default(false)
+  relatedId String?
+  createdAt DateTime         @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
   @@index([createdAt])
 }

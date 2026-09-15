@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import prisma from "@/prisma/client";
 import { updateTaskSchema } from "../../../schemas/task.schemas";
+import { createNotification } from "../../../lib/notificationsHelper";
 
 type TasksProps = {
   params: Promise<{
@@ -157,9 +158,21 @@ export async function PUT(request: Request, { params }: TasksProps) {
       },
     });
 
+    let notification = null;
+
+    if (assignedToId) {
+      notification = await createNotification({
+        userId: assignedToId,
+        type: "TASK_ASSIGNED",
+        message: `You were assigned the task "${task.title}".`,
+        relatedId: task.id,
+      });
+    }
+
     return NextResponse.json({
       message: "Task updated successfully",
       task: updatedTask,
+      notification,
     });
   } catch (error) {
     console.error("Update task error:", error);
