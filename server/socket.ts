@@ -7,8 +7,20 @@ const io = new Server(3001, {
   },
 });
 
+const onlineUsers = new Map<string, string>();
+
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
+
+  socket.on("user-online", (userId: string) => {
+    onlineUsers.set(userId, socket.id);
+
+    console.log("User online:", userId);
+
+    io.emit("user-online", userId);
+
+    socket.emit("online-users", Array.from(onlineUsers.keys()));
+  });
 
   socket.on("join-workspace", (workspaceId: string) => {
     socket.join(`workspace:${workspaceId}`);
@@ -24,6 +36,18 @@ io.on("connection", (socket) => {
   );
 
   socket.on("disconnect", () => {
+    for (const [userId, socketId] of onlineUsers.entries()) {
+      if (socketId === socket.id) {
+        onlineUsers.delete(userId);
+
+        console.log("User offline:", userId);
+
+        io.emit("user-offline", userId);
+
+        break;
+      }
+    }
+
     console.log("User disconnected:", socket.id);
   });
 });

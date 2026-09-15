@@ -19,8 +19,7 @@ const WorkspaceChat = ({ workspaceId, currentUserId }: WorkspaceChatProps) => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    // console.log("Joining workspace:", workspaceId);
-
+    socket.emit("user-online", currentUserId);
     socket.emit("join-workspace", workspaceId);
 
     const handleNewMessage = (message: Message) => {
@@ -29,9 +28,7 @@ const WorkspaceChat = ({ workspaceId, currentUserId }: WorkspaceChatProps) => {
       queryClient.setQueryData(
         ["messages", workspaceId],
         (oldData: { data: Message[] } | undefined) => {
-          if (!oldData) {
-            return { data: [message] };
-          }
+          if (!oldData) return { data: [message] };
 
           return {
             data: [...oldData.data, message],
@@ -45,7 +42,7 @@ const WorkspaceChat = ({ workspaceId, currentUserId }: WorkspaceChatProps) => {
     return () => {
       socket.off("new-message", handleNewMessage);
     };
-  }, [workspaceId, queryClient]);
+  }, [workspaceId, currentUserId, queryClient]);
 
   const handleSendMessage = () => {
     const trimmedContent = content.trim();

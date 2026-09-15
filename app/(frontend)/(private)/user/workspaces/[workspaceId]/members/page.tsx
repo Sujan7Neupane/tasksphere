@@ -8,6 +8,9 @@ import {
 } from "../../../../../../hooks/useMembers";
 import toast from "react-hot-toast";
 import Button from "../../../../../components/ui/Button";
+import { useEffect, useState } from "react";
+import socket from "../../../../../components/chat/socket";
+import { useSession } from "next-auth/react";
 
 const MembersPage = () => {
   const params = useParams();
@@ -19,6 +22,38 @@ const MembersPage = () => {
 
   const updateMemberRole = useUpdateMemberRole();
   const removeMember = useRemoveMember();
+
+  const { data: session } = useSession();
+
+  const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!session?.user?.id) {
+      return;
+    }
+
+    socket.emit("user-online", session.user.id);
+
+    socket.on("online-users", (users: string[]) => {
+      setOnlineUsers(users);
+    });
+
+    socket.on("user-online", (userId: string) => {
+      setOnlineUsers((currentUsers) => [...new Set([...currentUsers, userId])]);
+    });
+
+    socket.on("user-offline", (userId: string) => {
+      setOnlineUsers((currentUsers) =>
+        currentUsers.filter((id) => id !== userId),
+      );
+    });
+
+    return () => {
+      socket.off("online-users");
+      socket.off("user-online");
+      socket.off("user-offline");
+    };
+  }, [session?.user?.id]);
 
   const handleRoleChange = (userId: string, role: "ADMIN" | "MEMBER") => {
     updateMemberRole.mutate(
@@ -91,7 +126,19 @@ const MembersPage = () => {
               <tbody>
                 {members?.map((member) => (
                   <tr key={member.userId} className="border-t">
-                    <td className="px-4 py-3">{member.name}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`h-2.5 w-2.5 rounded-full ${
+                            onlineUsers.includes(member.userId)
+                              ? "bg-success"
+                              : "bg-base-300"
+                          }`}
+                        />
+
+                        <span>{member.name}</span>
+                      </div>
+                    </td>
 
                     <td className="px-4 py-3">{member.email}</td>
 
