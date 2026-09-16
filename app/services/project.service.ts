@@ -1,4 +1,4 @@
-import api from "../lib/axios";
+import api from "../../lib/axios";
 
 export const getProjects = async (workspaceId: string) => {
   // console.log("workspace id", workspaceId);

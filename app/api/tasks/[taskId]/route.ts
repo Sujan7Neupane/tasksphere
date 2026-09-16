@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import prisma from "@/prisma/client";
 import { updateTaskSchema } from "../../../schemas/task.schemas";
-import { createNotification } from "../../../lib/notificationsHelper";
+import { createNotification } from "../../../../lib/notificationsHelper";
 
 type TasksProps = {
   params: Promise<{

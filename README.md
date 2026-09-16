@@ -1,36 +1,121 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TaskSphere
 
-## Getting Started
+> **Where teams orbit around what matters.**
 
-First, run the development server:
+TaskSphere is a full-stack workspace, project, and task management platform — built to explore how real production apps are wired together, end to end. Think Trello meets Slack, built from scratch with a modern TypeScript stack.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+![TaskSphere dashboard](./docs/screenshots/dashboard.png)
+
+---
+
+## Why TaskSphere?
+
+Most task apps stop at CRUD. TaskSphere goes further — real-time chat, role-based access at two levels (platform *and* workspace), and an admin control plane, all built by hand to understand what's really happening under the hood of tools like Linear, Asana, or ClickUp.
+
+---
+
+## Features
+
+| Area                 | Highlights                                                                                   |
+| -------------------- | -------------------------------------------------------------------------------------------- |
+| **Auth**             | Auth.js sessions, bcrypt hashing, protected routes, user/admin roles, account enable/disable |
+| **Workspaces**       | Owner/Admin/Member roles, invitations, member management                                     |
+| **Projects & Tasks** | Full CRUD, assignees, status, priority, due dates                                            |
+| **Comments**         | Threaded task discussion                                                                     |
+| **Live Chat**        | Socket.IO-powered, real-time, per-workspace                                                  |
+| **Admin Panel**      | Manage users & workspaces platform-wide                                                      |
+
+**Task board**
+![Task board](./docs/screenshots/tasks-board.png)
+
+**Real-time chat**
+![Real-time chat](./docs/screenshots/workspace-chat.png)
+
+**Admin panel**
+![Admin panel](./docs/screenshots/admin-panel.png)
+
+**Task detail & comments**
+![Task detail with comments](./docs/screenshots/task-detail.png)
+
+---
+
+## Tech Stack
+
+**Frontend** — Next.js · React · TypeScript · Tailwind CSS · TanStack Query · React Hook Form · Zod
+
+**Backend** — Next.js API Routes · Auth.js · Prisma · PostgreSQL · bcrypt · Socket.IO
+
+---
+
+## Architecture at a Glance
+
+```text
+tasksphere/
+├── app/            → routes, pages, API handlers
+├── components/      → UI building blocks
+├── hooks/            → shared React logic
+├── lib/               → core utilities
+├── schemas/         → Zod validation
+├── services/        → data access layer
+├── prisma/           → schema & migrations
+└── auth.ts            → Auth.js config
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Two independent role systems:**
+- **Platform roles** → `USER` / `ADMIN` — who can access the admin panel
+- **Workspace roles** → `OWNER` / `ADMIN` / `MEMBER` — who can do what *inside* a workspace
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**Database schema (ER diagram)**
+![TaskSphere ER diagram](./docs/screenshots/er-diagram.png)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Quick Start
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+git clone <your-repository-url>
+cd tasksphere
+npm install
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Create a `.env` file:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```env
+DATABASE_URL="your-postgresql-database-url"
+AUTH_SECRET="your-auth-secret"
+NEXT_PUBLIC_SOCKET_URL="http://localhost:3001"
+```
 
-## Deploy on Vercel
+Set up the database and launch:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npx prisma migrate dev
+npx prisma generate
+npm run dev
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+App → `http://localhost:3000`
+Socket.IO server → `http://localhost:3001` (run separately for live chat)
+
+---
+
+## What This Project Demonstrates
+
+- Designing a relational schema (Users, Workspaces, Projects, Tasks, Comments, Invitations, Messages) with Prisma
+- Two-tier role-based access control
+- Real-time features with Socket.IO
+- Type-safe forms and validation with React Hook Form + Zod
+- Server state management with TanStack Query
+- Building an admin dashboard from scratch
+
+---
+
+## Status
+
+Actively evolving — core features (auth, workspaces, projects, tasks, comments, real-time chat, admin panel) are live, with more on the way.
+
+---
+
+## Author
+
+**Sujan Neupane**

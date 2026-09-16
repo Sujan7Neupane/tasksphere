@@ -1,4 +1,4 @@
-import api from "../lib/axios";
+import api from "../../lib/axios";
 import { MessagesResponse, SendMessageData } from "../types/message.types";
 
 export const getMessages = async (

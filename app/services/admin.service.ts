@@ -1,5 +1,5 @@
 import { AdminUsersResponse } from "../types/user.types";
-import api from "../lib/axios";
+import api from "../../lib/axios";
 import {
   AdminWorkspaceDetailResponse,
   AdminWorkspacesResponse,
