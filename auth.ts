@@ -4,9 +4,14 @@ import prisma from "./prisma/client";
 import bcrypt from "bcrypt";
 import type { Session } from "next-auth";
 import type { JWT } from "next-auth/jwt";
+import GoogleProvider from "next-auth/providers/google";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
     CredentialsProvider({
       name: "Credentials",
 
@@ -36,7 +41,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           },
         });
 
-        if (!user) throw new CredentialsSignin("Invalid email or password.");
+        if (!user) throw new CredentialsSignin("User not found.");
 
         if (!user.password) {
           throw new CredentialsSignin("Invalid email or password.");
@@ -67,12 +72,49 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   // to add id and platform role in token
   // generally nextjs ma token ma name and email matra huncha
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.platformRole = user.platformRole;
-        token.isActive = user.isActive;
+    async signIn({ user, account }) {
+      if (account?.provider === "google") {
+        console.log("GOOGLE EMAIL:", user.email);
+
+        const dbUser = await prisma.user.findUnique({
+          where: {
+            email: user.email!,
+          },
+        });
+        console.log("DB USER:", dbUser);
+
+        if (!dbUser) {
+          return "/login?error=UserNotFound";
+        }
+
+        if (!dbUser.isActive) {
+          return "/login?error=AccountDisabled";
+        }
       }
+
+      return true;
+    },
+    async jwt({ token, user, account }) {
+      if (user) {
+        if (account?.provider === "google") {
+          const dbUser = await prisma.user.findUnique({
+            where: {
+              email: user.email!,
+            },
+          });
+
+          if (dbUser) {
+            token.id = dbUser.id.toString();
+            token.platformRole = dbUser.platformRole;
+            token.isActive = dbUser.isActive;
+          }
+        } else {
+          token.id = user.id;
+          token.platformRole = user.platformRole;
+          token.isActive = user.isActive;
+        }
+      }
+
       return token;
     },
     async session({ session, token }: { session: Session; token: JWT }) {

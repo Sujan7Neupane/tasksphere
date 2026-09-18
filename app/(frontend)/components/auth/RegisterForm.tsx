@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -12,6 +12,8 @@ import FormInput from "../ui/FormInput";
 import PasswordInput from "../ui/PasswordInput";
 import Button from "../ui/Button";
 import { RegisterFormData, registerSchema } from "../../../schemas/auth.schema";
+import { FcGoogle } from "react-icons/fc";
+import { signIn } from "next-auth/react";
 
 const RegisterForm = () => {
   const router = useRouter();
@@ -66,6 +68,26 @@ const RegisterForm = () => {
       setIsSubmitting(false);
     }
   };
+
+  const handleGoogleSignup = async () => {
+    await signIn("google", {
+      callbackUrl: "/",
+    });
+  };
+
+  const searchParams = useSearchParams();
+  const errorToastShown = useRef(false);
+
+  useEffect(() => {
+    const error = searchParams.get("error");
+
+    if (errorToastShown.current) return;
+
+    if (error === "AccountAlreadyExists") {
+      toast.error("An account with this email already exists. Please login.");
+      errorToastShown.current = true;
+    }
+  }, [searchParams]);
 
   return (
     <form

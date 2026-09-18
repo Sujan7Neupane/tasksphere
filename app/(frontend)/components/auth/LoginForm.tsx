@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -12,6 +12,9 @@ import FormInput from "../ui/FormInput";
 import PasswordInput from "../ui/PasswordInput";
 import Button from "../ui/Button";
 import { LoginFormData, loginSchema } from "../../../schemas/auth.schema";
+import { signIn } from "next-auth/react";
+
+import { FcGoogle } from "react-icons/fc";
 
 const LoginForm = () => {
   const router = useRouter();
@@ -58,6 +61,31 @@ const LoginForm = () => {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    await signIn("google", {
+      callbackUrl: "/",
+    });
+  };
+
+  const searchParams = useSearchParams();
+  const errorToastShown = useRef(false);
+
+  useEffect(() => {
+    const error = searchParams.get("error");
+
+    if (errorToastShown.current) return;
+
+    if (error === "UserNotFound") {
+      toast.error("User not found. Please register first.");
+      errorToastShown.current = true;
+    }
+
+    if (error === "AccountDisabled") {
+      toast.error("Your account has been disabled.");
+      errorToastShown.current = true;
+    }
+  }, [searchParams]);
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -89,6 +117,17 @@ const LoginForm = () => {
 
         <Button type="submit" className="mt-4 w-full" disabled={isSubmitting}>
           {isSubmitting ? "Logging in..." : "Login"}
+        </Button>
+
+        <div className="divider">OR</div>
+
+        <Button
+          type="button"
+          onClick={handleGoogleLogin}
+          className="btn w-full rounded-sm bg-transparent"
+        >
+          <FcGoogle className="h-5 w-5" />
+          Continue with Google
         </Button>
 
         <div className="mt-4 text-center">
